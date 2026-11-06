@@ -221,6 +221,36 @@ describe('Hostel Expense Tracker API Suite', () => {
       expect(newLoginRes.body.success).toBe(true);
       expect(newLoginRes.body.token).toBeDefined();
     });
+
+    it('should reset password without requiring full name even if user record has no name', async () => {
+      // Create user without a name to simulate legacy/Atlas records missing name
+      const noNameUser = await User.create({
+        email: 'noname.student@hostel.edu',
+        password: 'initialSecret123',
+      });
+      await User.updateOne({ _id: noNameUser._id }, { $unset: { name: 1 } });
+
+      const dbUser = await User.findById(noNameUser._id);
+      const rawToken = dbUser.getResetPasswordToken();
+      await dbUser.save({ validateBeforeSave: false });
+
+      const newPassword = 'brandNewPassword456';
+      const res = await request(app)
+        .post(`/api/auth/reset-password/${rawToken}`)
+        .send({ password: newPassword });
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.message).toMatch(/password reset successful/i);
+
+      // Verify login with new password
+      const loginRes = await request(app)
+        .post('/api/auth/login')
+        .send({ email: 'noname.student@hostel.edu', password: newPassword });
+
+      expect(loginRes.statusCode).toBe(200);
+      expect(loginRes.body.success).toBe(true);
+    });
   });
 
   describe('Expense Management Module & Alerts', () => {

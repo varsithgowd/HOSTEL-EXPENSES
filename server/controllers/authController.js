@@ -242,11 +242,16 @@ export const resetPassword = async (req, res, next) => {
       });
     }
 
+    // Ensure safe fallback if name is absent on older database records
+    if (!user.name || !user.name.trim()) {
+      user.name = 'Hostel Student';
+    }
+
     // Update password (pre-save hook hashes with bcrypt salt 10)
     user.password = password;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
-    await user.save();
+    await user.save({ validateModifiedOnly: true });
 
     res.status(200).json({
       success: true,
