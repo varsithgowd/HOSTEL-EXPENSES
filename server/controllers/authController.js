@@ -1,6 +1,8 @@
+import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import Budget from '../models/Budget.js';
+import { sendPasswordResetEmail } from '../services/emailService.js';
 
 const generateToken = (id) => {
   return jwt.sign(
@@ -134,6 +136,121 @@ export const getMe = async (req, res, next) => {
         email: user.email,
         createdAt: user.createdAt,
       },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Forgot Password - Request reset link
+// @route   POST /api/auth/forgot-password
+// @access  Public
+export const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide an email address',
+      });
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+
+    // Security: Never reveal whether an email address exists
+    if (!user) {
+      return res.status(200).json({
+        success: true,
+        message: 'If an account exists with that email, a password reset link has been sent.',
+      });
+    }
+
+    // Generate random reset token (hashed SHA-256 in DB, raw returned for email)
+    const resetToken = user.getResetPasswordToken();
+    await user.save({ validateBeforeSave: false });
+
+    // Resolve base URL from request Origin, CLIENT_URL, or fallback
+    const origin = req.headers.origin || process.env.CLIENT_URL || 'http://localhost:5173';
+    const cleanOrigin = origin.replace(/\/+$/, '');
+    const resetUrl = `${cleanOrigin}/reset-password/${resetToken}`;
+
+    try {
+      await sendPasswordResetEmail({
+        to: user.email,
+        name: user.name,
+        resetUrl,
+      });
+
+      res.status(200).json({
+        success: true,
+        message: 'If an account exists with that email, a password reset link has been sent.',
+      });
+    } catch (emailErr) {
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+      await user.save({ validateBeforeSave: false });
+
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to send password reset email. Please try again later.',
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Reset Password with token
+// @route   POST /api/auth/reset-password
+// @route   POST /api/auth/reset-password/:token
+// @access  Public
+export const resetPassword = async (req, res, next) => {
+  try {
+    const token = req.params.token || req.body.token;
+    const { password } = req.body;
+
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password reset token is required',
+      });
+    }
+
+    if (!password || password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password must be at least 6 characters long',
+      });
+    }
+
+    // Hash incoming token to match with stored SHA-256 hash
+    const hashedToken = crypto
+      .createHash('sha256')
+      .update(token)
+      .digest('hex');
+
+    const user = await User.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpire: { $gt: Date.now() },
+    }).select('+password');
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or expired password reset token',
+      });
+    }
+
+    // Update password (pre-save hook hashes with bcrypt salt 10)
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Password reset successful. You can now log in with your new password.',
     });
   } catch (error) {
     next(error);

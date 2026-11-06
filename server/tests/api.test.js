@@ -1,6 +1,7 @@
 import request from 'supertest';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import { jest } from '@jest/globals';
 import app from '../app.js';
 import User from '../models/User.js';
 import Expense from '../models/Expense.js';
@@ -10,16 +11,20 @@ import Notification from '../models/Notification.js';
 
 let mongoServer;
 
+jest.setTimeout(30000);
+
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
   const uri = mongoServer.getUri();
   await mongoose.connect(uri);
-});
+}, 30000);
 
 afterAll(async () => {
   await mongoose.disconnect();
-  await mongoServer.stop();
-});
+  if (mongoServer) {
+    await mongoServer.stop();
+  }
+}, 30000);
 
 afterEach(async () => {
   const collections = mongoose.connection.collections;
@@ -92,6 +97,129 @@ describe('Hostel Expense Tracker API Suite', () => {
       const res = await request(app).get('/api/expenses');
       expect(res.statusCode).toBe(401);
       expect(res.body.success).toBe(false);
+    });
+  });
+
+  describe('Forgot & Reset Password Module', () => {
+    const studentUser = {
+      name: 'Rohan Gupta',
+      email: 'rohan.gupta@hostel.edu',
+      password: 'initialPassword123',
+    };
+
+    beforeEach(async () => {
+      await request(app).post('/api/auth/register').send(studentUser);
+    });
+
+    it('should handle forgot-password with registered email and store hashed token', async () => {
+      const res = await request(app)
+        .post('/api/auth/forgot-password')
+        .send({ email: studentUser.email });
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.message).toMatch(/password reset link has been sent/i);
+
+      // Verify token in database
+      const user = await User.findOne({ email: studentUser.email }).select('+resetPasswordToken +resetPasswordExpire');
+      expect(user.resetPasswordToken).toBeDefined();
+      expect(user.resetPasswordExpire).toBeDefined();
+      expect(user.resetPasswordExpire.getTime()).toBeGreaterThan(Date.now());
+    });
+
+    it('should handle forgot-password with unregistered email without revealing user existence', async () => {
+      const res = await request(app)
+        .post('/api/auth/forgot-password')
+        .send({ email: 'nonexistent.student@hostel.edu' });
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.message).toMatch(/password reset link has been sent/i);
+    });
+
+    it('should reject reset-password with invalid token', async () => {
+      const res = await request(app)
+        .post('/api/auth/reset-password/invalidtoken12345')
+        .send({ password: 'newPassword123' });
+
+      expect(res.statusCode).toBe(400);
+      expect(res.body.success).toBe(false);
+      expect(res.body.message).toMatch(/invalid or expired/i);
+    });
+
+    it('should reject reset-password with expired token', async () => {
+      const user = await User.findOne({ email: studentUser.email });
+      const rawToken = user.getResetPasswordToken();
+      // Set expiry in the past
+      user.resetPasswordExpire = Date.now() - 60000;
+      await user.save({ validateBeforeSave: false });
+
+      const res = await request(app)
+        .post(`/api/auth/reset-password/${rawToken}`)
+        .send({ password: 'newPassword123' });
+
+      expect(res.statusCode).toBe(400);
+      expect(res.body.success).toBe(false);
+      expect(res.body.message).toMatch(/invalid or expired/i);
+    });
+
+    it('should reject reset-password if password is less than 6 characters', async () => {
+      const user = await User.findOne({ email: studentUser.email });
+      const rawToken = user.getResetPasswordToken();
+      await user.save({ validateBeforeSave: false });
+
+      const res = await request(app)
+        .post(`/api/auth/reset-password/${rawToken}`)
+        .send({ password: '123' });
+
+      expect(res.statusCode).toBe(400);
+      expect(res.body.success).toBe(false);
+      expect(res.body.message).toMatch(/at least 6 characters/i);
+    });
+
+    it('should successfully reset password, allow new password login, and reject old password', async () => {
+      const user = await User.findOne({ email: studentUser.email });
+      const rawToken = user.getResetPasswordToken();
+      await user.save({ validateBeforeSave: false });
+
+      const newPassword = 'brandNewPassword999';
+
+      // 1. Reset password
+      const resetRes = await request(app)
+        .post(`/api/auth/reset-password/${rawToken}`)
+        .send({ password: newPassword });
+
+      expect(resetRes.statusCode).toBe(200);
+      expect(resetRes.body.success).toBe(true);
+      expect(resetRes.body.message).toMatch(/password reset successful/i);
+
+      // 2. Token must be invalidated in DB
+      const updatedUser = await User.findOne({ email: studentUser.email }).select('+resetPasswordToken +resetPasswordExpire');
+      expect(updatedUser.resetPasswordToken).toBeUndefined();
+      expect(updatedUser.resetPasswordExpire).toBeUndefined();
+
+      // 3. Re-using the same token must fail
+      const reuseRes = await request(app)
+        .post(`/api/auth/reset-password/${rawToken}`)
+        .send({ password: 'anotherPassword123' });
+      expect(reuseRes.statusCode).toBe(400);
+
+      // 4. Login with old password must fail
+      const oldLoginRes = await request(app)
+        .post('/api/auth/login')
+        .send({ email: studentUser.email, password: studentUser.password });
+
+      expect(oldLoginRes.statusCode).toBe(401);
+      expect(oldLoginRes.body.success).toBe(false);
+
+      // 5. Login with new password must succeed
+      const newLoginRes = await request(app)
+        .post('/api/auth/login')
+        .send({ email: studentUser.email, password: newPassword });
+
+      expect(newLoginRes.statusCode).toBe(200);
+      expect(newLoginRes.body.success).toBe(true);
+      expect(newLoginRes.body.token).toBeDefined();
     });
   });
 

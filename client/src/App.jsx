@@ -7,6 +7,8 @@ import DashboardLayout from './layouts/DashboardLayout';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import DashboardPage from './pages/DashboardPage';
 import ExpensesPage from './pages/ExpensesPage';
 import BudgetPage from './pages/BudgetPage';
@@ -65,6 +67,30 @@ export function App() {
               element={
                 <PublicRoute>
                   <RegisterPage />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/forgot-password"
+              element={
+                <PublicRoute>
+                  <ForgotPasswordPage />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/reset-password/:token"
+              element={
+                <PublicRoute>
+                  <ResetPasswordPage />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/reset-password"
+              element={
+                <PublicRoute>
+                  <ResetPasswordPage />
                 </PublicRoute>
               }
             />
