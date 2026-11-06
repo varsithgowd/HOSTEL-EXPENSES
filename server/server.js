@@ -1,19 +1,37 @@
 import dotenv from 'dotenv';
+import os from 'os';
 import app from './app.js';
 import { connectDB, disconnectDB } from './config/db.js';
 
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
+const HOST = process.env.HOST || '0.0.0.0';
+
+// Helper to get local network IP
+const getLocalIP = () => {
+  const nets = os.networkInterfaces();
+  for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+      // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
+      if (net.family === 'IPv4' && !net.internal) {
+        return net.address;
+      }
+    }
+  }
+  return 'localhost';
+};
 
 // Connect to Database
 connectDB()
   .then(() => {
-    const server = app.listen(PORT, () => {
+    const server = app.listen(PORT, HOST, () => {
+      const localIP = getLocalIP();
       console.log(`===============================================`);
       console.log(`🚀 Hostel Expense Tracker Server is running!`);
-      console.log(`📡 URL: http://localhost:${PORT}`);
-      console.log(`🌐 Health check: http://localhost:${PORT}/api/health`);
+      console.log(`📡 Local:   http://localhost:${PORT}`);
+      console.log(`📱 Network: http://${localIP}:${PORT}`);
+      console.log(`🌐 Health:  http://${localIP}:${PORT}/api/health`);
       console.log(`⏰ Timezone: Asia/Kolkata`);
       console.log(`===============================================`);
     });

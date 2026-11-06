@@ -91,11 +91,11 @@ export const AnalyticsPage = () => {
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="p-1 rounded-xl bg-bg-card border border-border-subtle flex items-center gap-1 text-xs">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+          <div className="p-1 rounded-xl bg-bg-card border border-border-subtle flex flex-wrap items-center gap-1 text-xs w-full sm:w-auto">
             <button
               onClick={() => setFilterType('current')}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition ${
+              className={`flex-1 sm:flex-initial text-center px-3 py-1.5 rounded-lg font-semibold transition ${
                 filterType === 'current'
                   ? 'bg-brand-purple text-white shadow-soft-purple'
                   : 'text-text-secondary hover:text-text-main'
@@ -105,7 +105,7 @@ export const AnalyticsPage = () => {
             </button>
             <button
               onClick={() => setFilterType('previous')}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition ${
+              className={`flex-1 sm:flex-initial text-center px-3 py-1.5 rounded-lg font-semibold transition ${
                 filterType === 'previous'
                   ? 'bg-brand-purple text-white shadow-soft-purple'
                   : 'text-text-secondary hover:text-text-main'
@@ -115,7 +115,7 @@ export const AnalyticsPage = () => {
             </button>
             <button
               onClick={() => setFilterType('custom')}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition ${
+              className={`flex-1 sm:flex-initial text-center px-3 py-1.5 rounded-lg font-semibold transition ${
                 filterType === 'custom'
                   ? 'bg-brand-purple text-white shadow-soft-purple'
                   : 'text-text-secondary hover:text-text-main'

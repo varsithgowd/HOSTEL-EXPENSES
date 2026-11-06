@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
+import BottomNav from '../components/BottomNav';
 import AddExpenseModal from '../components/AddExpenseModal';
 import { useNotifications } from '../context/NotificationContext';
 import AlertBanner from '../components/AlertBanner';
@@ -18,18 +19,18 @@ export const DashboardLayout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-bg-main flex text-text-main selection:bg-brand-purple selection:text-white">
-      {/* Sidebar */}
+    <div className="min-h-screen bg-bg-main flex text-text-main selection:bg-brand-purple selection:text-white overflow-x-hidden">
+      {/* Sidebar (Desktop persistent, mobile collapsible via hamburger) */}
       <Sidebar mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
         <Navbar
           onOpenAddExpense={() => setIsAddModalOpen(true)}
           setMobileOpen={setMobileOpen}
         />
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-6">
+        <main className="flex-1 p-3.5 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-5 sm:space-y-6 pb-24 md:pb-8">
           {/* Active Global Alerts */}
           {activeAlerts && activeAlerts.length > 0 && (
             <div className="space-y-3">
@@ -47,6 +48,9 @@ export const DashboardLayout = () => {
           <Outlet context={{ refreshKey, triggerRefresh: handleExpenseSaved }} />
         </main>
       </div>
+
+      {/* Mobile Bottom Navigation Bar */}
+      <BottomNav />
 
       {/* Global Quick Add Expense Modal */}
       <AddExpenseModal

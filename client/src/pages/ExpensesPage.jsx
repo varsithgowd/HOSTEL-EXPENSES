@@ -177,21 +177,21 @@ export const ExpensesPage = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           {expenses.length > 0 && (
             <button
               onClick={exportToCSV}
-              className="px-3.5 py-2 rounded-xl bg-bg-card border border-border-subtle hover:bg-bg-cardHover text-text-main text-xs font-semibold flex items-center gap-1.5 transition"
+              className="flex-1 sm:flex-initial px-3 py-2 rounded-xl bg-bg-card border border-border-subtle hover:bg-bg-cardHover text-text-main text-xs font-semibold flex items-center justify-center gap-1.5 transition"
               title="Download CSV report"
             >
               <Download className="w-3.5 h-3.5" />
-              <span>Export CSV</span>
+              <span>CSV</span>
             </button>
           )}
 
           <button
             onClick={() => setIsSplitOpen(true)}
-            className="px-3.5 py-2 rounded-xl bg-bg-card border border-border-accent hover:border-brand-purple/50 text-brand-purpleLight text-xs font-semibold flex items-center gap-1.5 transition"
+            className="flex-1 sm:flex-initial px-3 py-2 rounded-xl bg-bg-card border border-border-accent hover:border-brand-purple/50 text-brand-purpleLight text-xs font-semibold flex items-center justify-center gap-1.5 transition"
             title="Split Bill with Roommates"
           >
             <span>Split Bill</span>
@@ -202,7 +202,7 @@ export const ExpensesPage = () => {
               setExpenseToEdit(null);
               setIsModalOpen(true);
             }}
-            className="px-4 py-2 rounded-xl bg-brand-purple hover:bg-brand-purpleDark text-white text-xs font-bold shadow-soft-purple flex items-center gap-1.5 transition active:scale-95"
+            className="flex-1 sm:flex-initial px-3.5 py-2 rounded-xl bg-brand-purple hover:bg-brand-purpleDark text-white text-xs font-bold shadow-soft-purple flex items-center justify-center gap-1.5 transition active:scale-95"
           >
             <Plus className="w-4 h-4" />
             <span>Add Expense</span>
@@ -332,9 +332,10 @@ export const ExpensesPage = () => {
         </div>
       </div>
 
-      {/* Expenses Table */}
+      {/* Expenses Table & Mobile Card List */}
       <div className="glass-card overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Desktop & Tablet Table View */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-border-subtle bg-bg-cardHover/50 text-[11px] uppercase tracking-wider text-text-muted">
@@ -436,6 +437,85 @@ export const ExpensesPage = () => {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Responsive Cards View */}
+        <div className="block md:hidden divide-y divide-border-subtle">
+          {loading ? (
+            <div className="py-12 text-center text-xs text-text-muted">
+              Loading expenses...
+            </div>
+          ) : expenses.length === 0 ? (
+            <div className="py-12 text-center text-xs text-text-muted p-4">
+              <Receipt className="w-8 h-8 mx-auto mb-2 text-brand-purple/40" />
+              <p className="font-semibold text-text-main">No expenses match your filters.</p>
+              <p className="text-[11px] mt-0.5">Try clearing filters or click "+ Add Expense".</p>
+            </div>
+          ) : (
+            expenses.map((expense) => (
+              <div
+                key={expense._id}
+                className="p-3.5 space-y-2.5 hover:bg-bg-cardHover/50 transition text-xs"
+              >
+                {/* Title and Amount */}
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <h4 className="font-bold text-sm text-text-main truncate">
+                      {expense.title}
+                    </h4>
+                    <div className="flex items-center gap-2 mt-0.5 text-[11px] text-text-muted">
+                      <span>{formatDate(expense.date)}</span>
+                      <span>•</span>
+                      <span className="text-text-secondary">{expense.paymentMethod}</span>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <span className="text-sm font-extrabold text-brand-purpleLight">
+                      {formatCurrency(expense.amount)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Optional Note/Description */}
+                {expense.description && (
+                  <p className="text-[11px] text-text-secondary line-clamp-2 bg-bg-input p-2 rounded-lg border border-border-subtle">
+                    {expense.description}
+                  </p>
+                )}
+
+                {/* Footer: Category & Touch-friendly Action Buttons */}
+                <div className="flex items-center justify-between pt-1">
+                  <CategoryBadge category={expense.category} />
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => setViewExpense(expense)}
+                      className="p-2 rounded-lg bg-bg-card border border-border-subtle text-text-muted hover:text-text-main active:scale-95 transition"
+                      aria-label="View expense details"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setExpenseToEdit(expense);
+                        setIsModalOpen(true);
+                      }}
+                      className="p-2 rounded-lg bg-bg-card border border-border-subtle text-text-muted hover:text-brand-purpleLight active:scale-95 transition"
+                      aria-label="Edit expense"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => setDeleteConfirmId(expense._id)}
+                      className="p-2 rounded-lg bg-bg-card border border-border-subtle text-text-muted hover:text-status-danger active:scale-95 transition"
+                      aria-label="Delete expense"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
 
         {/* Pagination controls */}

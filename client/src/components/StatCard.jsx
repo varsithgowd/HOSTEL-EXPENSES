@@ -42,20 +42,20 @@ export const StatCard = ({
 
   return (
     <div
-      className={`glass-card p-5 relative overflow-hidden transition-all duration-300 ${scheme.border} hover:-translate-y-0.5 hover:${scheme.glow}`}
+      className={`glass-card p-4 sm:p-5 relative overflow-hidden transition-all duration-300 ${scheme.border} hover:-translate-y-0.5 hover:${scheme.glow}`}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-semibold text-text-secondary tracking-wide uppercase">
+      <div className="flex items-start justify-between gap-2.5 sm:gap-3">
+        <div className="min-w-0 flex-1">
+          <p className="text-[11px] sm:text-xs font-semibold text-text-secondary tracking-wide uppercase truncate">
             {title}
           </p>
-          <h3 className="text-2xl font-extrabold text-text-main mt-1 tracking-tight">
+          <h3 className="text-xl sm:text-2xl font-extrabold text-text-main mt-1 tracking-tight truncate">
             {value}
           </h3>
         </div>
 
-        <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 ${scheme.iconBg}`}>
-          {Icon && <Icon className="w-5 h-5" />}
+        <div className={`w-9 h-9 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center shrink-0 ${scheme.iconBg}`}>
+          {Icon && <Icon className="w-4 h-4 sm:w-5 sm:h-5" />}
         </div>
       </div>
 

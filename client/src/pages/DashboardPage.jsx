@@ -140,20 +140,22 @@ export const DashboardPage = () => {
         </div>
 
         {/* Month & Year Filter */}
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 bg-bg-card border border-border-subtle rounded-xl px-3 py-1.5 text-xs text-text-main">
-            <Calendar className="w-3.5 h-3.5 text-brand-purpleLight" />
-            <select
-              value={selectedMonth}
-              onChange={(e) => setSelectedMonth(Number(e.target.value))}
-              className="bg-transparent text-xs font-semibold text-text-main focus:outline-none cursor-pointer"
-            >
-              {MONTH_NAMES.map((m, idx) => (
-                <option key={m} value={idx + 1} className="bg-bg-card text-text-main">
-                  {m}
-                </option>
-              ))}
-            </select>
+        <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-2">
+          <div className="flex-1 sm:flex-initial flex items-center justify-between sm:justify-start gap-1.5 bg-bg-card border border-border-subtle rounded-xl px-3 py-1.5 text-xs text-text-main">
+            <div className="flex items-center gap-1.5">
+              <Calendar className="w-3.5 h-3.5 text-brand-purpleLight shrink-0" />
+              <select
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(Number(e.target.value))}
+                className="bg-transparent text-xs font-semibold text-text-main focus:outline-none cursor-pointer"
+              >
+                {MONTH_NAMES.map((m, idx) => (
+                  <option key={m} value={idx + 1} className="bg-bg-card text-text-main">
+                    {m}
+                  </option>
+                ))}
+              </select>
+            </div>
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(Number(e.target.value))}
@@ -170,7 +172,7 @@ export const DashboardPage = () => {
           <button
             onClick={fetchDashboardData}
             title="Refresh Data"
-            className="p-2 rounded-xl bg-bg-card border border-border-subtle hover:bg-bg-cardHover text-text-secondary hover:text-text-main transition"
+            className="p-2 rounded-xl bg-bg-card border border-border-subtle hover:bg-bg-cardHover text-text-secondary hover:text-text-main transition shrink-0"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
           </button>

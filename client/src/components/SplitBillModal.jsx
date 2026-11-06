@@ -190,3 +190,4 @@ export const SplitBillModal = ({ isOpen, onClose, onLogShare }) => {
 };
 
 export default SplitBillModal;
+

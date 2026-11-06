@@ -44,9 +44,9 @@ export const Navbar = ({ onOpenAddExpense, setMobileOpen }) => {
   };
 
   return (
-    <header className="sticky top-0 z-30 h-16 bg-bg-main/90 backdrop-blur-md border-b border-border-subtle px-4 sm:px-6 flex items-center justify-between">
-      {/* Left: Mobile hamburger + greeting */}
-      <div className="flex items-center gap-3">
+    <header className="sticky top-0 z-30 h-16 bg-bg-main/90 backdrop-blur-md border-b border-border-subtle px-3 sm:px-6 flex items-center justify-between">
+      {/* Left: Mobile hamburger & logo + greeting */}
+      <div className="flex items-center gap-2.5 sm:gap-3">
         <button
           onClick={() => setMobileOpen(true)}
           className="md:hidden p-2 rounded-xl text-text-secondary hover:text-text-main hover:bg-bg-card transition"
@@ -54,6 +54,13 @@ export const Navbar = ({ onOpenAddExpense, setMobileOpen }) => {
         >
           <Menu className="w-5 h-5" />
         </button>
+
+        <div className="flex items-center gap-2 md:hidden">
+          <span className="text-sm font-bold tracking-tight text-text-main">
+            Hostel<span className="text-brand-purple">Expense</span>
+          </span>
+        </div>
+
         <div>
           <h2 className="text-sm font-semibold text-text-main hidden sm:block">
             Welcome back, <span className="text-brand-purpleLight">{user?.name?.split(' ')[0] || 'Student'}</span> 👋
@@ -65,34 +72,35 @@ export const Navbar = ({ onOpenAddExpense, setMobileOpen }) => {
       </div>
 
       {/* Right: Actions */}
-      <div className="flex items-center gap-2 sm:gap-3">
+      <div className="flex items-center gap-1.5 sm:gap-3">
         {/* Quick Add Expense Button */}
         <button
           onClick={onOpenAddExpense}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-brand-purple hover:bg-brand-purpleDark text-white text-xs font-semibold shadow-soft-purple transition active:scale-95"
+          className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-2 rounded-xl bg-brand-purple hover:bg-brand-purpleDark text-white text-xs font-semibold shadow-soft-purple transition active:scale-95"
         >
           <Plus className="w-4 h-4" />
-          <span>Add Expense</span>
+          <span className="hidden xs:inline sm:inline">Add Expense</span>
+          <span className="xs:hidden sm:hidden">Add</span>
         </button>
 
         {/* Notifications Bell Dropdown */}
         <div className="relative" ref={bellRef}>
           <button
             onClick={() => setShowBellMenu((prev) => !prev)}
-            className="relative p-2.5 rounded-xl bg-bg-card border border-border-subtle hover:border-border-accent text-text-secondary hover:text-text-main transition"
+            className="relative p-2 sm:p-2.5 rounded-xl bg-bg-card border border-border-subtle hover:border-border-accent text-text-secondary hover:text-text-main transition"
             aria-label="View notifications"
           >
             <Bell className="w-4 h-4" />
             {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-status-danger text-white text-[10px] font-bold flex items-center justify-center animate-pulse">
+              <span className="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-status-danger text-white text-[9px] sm:text-[10px] font-bold flex items-center justify-center animate-pulse">
                 {unreadCount > 9 ? '9+' : unreadCount}
               </span>
             )}
           </button>
 
-          {/* Notifications Dropdown Panel */}
+          {/* Notifications Dropdown Panel (responsive width) */}
           {showBellMenu && (
-            <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl bg-bg-card border border-border-accent shadow-2xl z-50 overflow-hidden">
+            <div className="absolute right-0 mt-2 w-[calc(100vw-1.5rem)] max-w-sm sm:w-96 rounded-2xl bg-bg-card border border-border-accent shadow-2xl z-50 overflow-hidden">
               <div className="p-3.5 border-b border-border-subtle flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-text-main">Notifications</span>

@@ -369,7 +369,7 @@ export const SavingsPage = () => {
       {/* Create / Edit Goal Modal */}
       {isCreateOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
-          <div className="glass-card max-w-md w-full p-6 space-y-4">
+          <div className="glass-card max-w-md w-full max-h-[90vh] overflow-y-auto p-6 space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
               <h3 className="text-base font-bold text-text-main">
                 {goalToEdit ? 'Edit Savings Goal' : 'Create Savings Goal'}
@@ -475,7 +475,7 @@ export const SavingsPage = () => {
       {/* Add Contribution Modal */}
       {contributeGoal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
-          <div className="glass-card max-w-sm w-full p-6 space-y-4">
+          <div className="glass-card max-w-sm w-full max-h-[90vh] overflow-y-auto p-6 space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
               <h3 className="text-base font-bold text-text-main">
                 Deposit to "{contributeGoal.title}"

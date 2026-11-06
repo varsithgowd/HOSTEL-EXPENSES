@@ -115,8 +115,8 @@ export const AIAssistantPage = () => {
 
       {/* Main Grid: Chat Area (left) + Context Metrics Sidebar (right) */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Chat Area (3 cols) */}
-        <div className="lg:col-span-3 glass-card flex flex-col h-[650px] overflow-hidden">
+        {/* Chat Area (3 cols on lg) */}
+        <div className="lg:col-span-3 glass-card flex flex-col h-[520px] sm:h-[650px] overflow-hidden">
           {/* Quick Prompt Chips Bar */}
           <div className="p-3 border-b border-border-subtle bg-bg-cardHover/40 overflow-x-auto flex items-center gap-2">
             <span className="text-[11px] font-semibold text-text-muted shrink-0 pl-1">

@@ -270,18 +270,18 @@ export const BudgetPage = () => {
       )}
 
       {/* Main Budget Gauges Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Monthly Budget Card */}
-        <div className="glass-card p-6 flex flex-col justify-between">
+        <div className="glass-card p-4 sm:p-6 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-brand-purple/15 text-brand-purple flex items-center justify-center">
-                  <PiggyBank className="w-6 h-6" />
+              <div className="flex items-center gap-2.5 sm:gap-3">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-brand-purple/15 text-brand-purple flex items-center justify-center shrink-0">
+                  <PiggyBank className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-text-main">Monthly Budget Overview</h3>
-                  <p className="text-xs text-text-muted">
+                  <h3 className="text-sm sm:text-base font-bold text-text-main">Monthly Budget Overview</h3>
+                  <p className="text-[11px] sm:text-xs text-text-muted">
                     {MONTH_NAMES[selectedMonth - 1]} {selectedYear}
                   </p>
                 </div>
@@ -291,23 +291,23 @@ export const BudgetPage = () => {
             </div>
 
             {/* Values */}
-            <div className="grid grid-cols-3 gap-3 my-6 p-4 rounded-xl bg-bg-cardHover border border-border-subtle text-center">
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-3 my-4 sm:my-6 p-2.5 sm:p-4 rounded-xl bg-bg-cardHover border border-border-subtle text-center">
               <div>
-                <p className="text-[11px] text-text-muted">Monthly Limit</p>
-                <p className="text-base font-extrabold text-text-main mt-0.5">
+                <p className="text-[10px] sm:text-[11px] text-text-muted">Monthly Limit</p>
+                <p className="text-xs sm:text-base font-extrabold text-text-main mt-0.5 truncate">
                   {formatCurrency(budgetData?.monthlyLimit || 0)}
                 </p>
               </div>
               <div>
-                <p className="text-[11px] text-text-muted">Total Spent</p>
-                <p className="text-base font-extrabold text-brand-purpleLight mt-0.5">
+                <p className="text-[10px] sm:text-[11px] text-text-muted">Total Spent</p>
+                <p className="text-xs sm:text-base font-extrabold text-brand-purpleLight mt-0.5 truncate">
                   {formatCurrency(budgetData?.totalMonthlySpent || 0)}
                 </p>
               </div>
               <div>
-                <p className="text-[11px] text-text-muted">Remaining</p>
+                <p className="text-[10px] sm:text-[11px] text-text-muted">Remaining</p>
                 <p
-                  className={`text-base font-extrabold mt-0.5 ${
+                  className={`text-xs sm:text-base font-extrabold mt-0.5 truncate ${
                     (budgetData?.remainingMonthly || 0) <= 0
                       ? 'text-status-danger'
                       : 'text-status-success'
@@ -353,16 +353,16 @@ export const BudgetPage = () => {
         </div>
 
         {/* Daily Spending Limit Card */}
-        <div className="glass-card p-6 flex flex-col justify-between">
+        <div className="glass-card p-4 sm:p-6 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-blue-500/15 text-blue-400 flex items-center justify-center">
-                  <Clock className="w-6 h-6" />
+              <div className="flex items-center gap-2.5 sm:gap-3">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-blue-500/15 text-blue-400 flex items-center justify-center shrink-0">
+                  <Clock className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-text-main">Today's Daily Cap</h3>
-                  <p className="text-xs text-text-muted">Day-level spending control</p>
+                  <h3 className="text-sm sm:text-base font-bold text-text-main">Today's Daily Cap</h3>
+                  <p className="text-[11px] sm:text-xs text-text-muted">Day-level spending control</p>
                 </div>
               </div>
 
@@ -370,23 +370,23 @@ export const BudgetPage = () => {
             </div>
 
             {/* Values */}
-            <div className="grid grid-cols-3 gap-3 my-6 p-4 rounded-xl bg-bg-cardHover border border-border-subtle text-center">
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-3 my-4 sm:my-6 p-2.5 sm:p-4 rounded-xl bg-bg-cardHover border border-border-subtle text-center">
               <div>
-                <p className="text-[11px] text-text-muted">Daily Limit</p>
-                <p className="text-base font-extrabold text-text-main mt-0.5">
+                <p className="text-[10px] sm:text-[11px] text-text-muted">Daily Limit</p>
+                <p className="text-xs sm:text-base font-extrabold text-text-main mt-0.5 truncate">
                   {formatCurrency(budgetData?.dailyLimit || 0)}
                 </p>
               </div>
               <div>
-                <p className="text-[11px] text-text-muted">Spent Today</p>
-                <p className="text-base font-extrabold text-blue-400 mt-0.5">
+                <p className="text-[10px] sm:text-[11px] text-text-muted">Spent Today</p>
+                <p className="text-xs sm:text-base font-extrabold text-blue-400 mt-0.5 truncate">
                   {formatCurrency(budgetData?.totalTodaySpent || 0)}
                 </p>
               </div>
               <div>
-                <p className="text-[11px] text-text-muted">Remaining</p>
+                <p className="text-[10px] sm:text-[11px] text-text-muted">Remaining</p>
                 <p
-                  className={`text-base font-extrabold mt-0.5 ${
+                  className={`text-xs sm:text-base font-extrabold mt-0.5 truncate ${
                     (budgetData?.remainingDaily || 0) <= 0
                       ? 'text-status-danger'
                       : 'text-status-success'
