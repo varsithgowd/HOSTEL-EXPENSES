@@ -16,6 +16,7 @@ import {
   Utensils,
   Receipt,
   Layers,
+  PiggyBank,
 } from 'lucide-react';
 import {
   PieChart,
