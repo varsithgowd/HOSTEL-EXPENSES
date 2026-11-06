@@ -34,6 +34,7 @@ Designed with a sophisticated dark purple and violet theme, responsive mobile/de
   - Filtered total calculation
 - **Pagination**: Smooth pagination controls
 - **Data Export**: Export expenses to CSV for auditing or sharing with parents/wardens
+- **Roommate Bill Splitter**: Calculate equal splits for food deliveries, shared autos, or room WiFi recharges across 2–6 roommates, and log your individual share directly into your expenses with one click.
 
 ### 3. Budget Management & Thresholds (`/budget`)
 - **Configurable Limits**: Set daily spending cap (e.g., ₹300) and monthly budget (e.g., ₹8,000)
@@ -50,6 +51,7 @@ Designed with a sophisticated dark purple and violet theme, responsive mobile/de
 - Threshold detection at **70%**, **90%**, and **100%+**
 - Persistent alert banners on Dashboard and Budget pages
 - Header notification bell with live unread counter, dropdown menu, mark read, and dismissal
+- **HTML5 Desktop Push Notifications**: One-click enable toggle in notification menu for immediate native browser alerts when entering warning or critical spending zones
 - Duplicate prevention (one notification per user per threshold per month)
 
 ### 5. Deep Analytics Module (`/analytics`)
