@@ -6,7 +6,15 @@ import { formatRelativeDate } from '../utils/formatters';
 
 export const Navbar = ({ onOpenAddExpense, setMobileOpen }) => {
   const { user } = useAuth();
-  const { notifications, unreadCount, markAsRead, markAllAsRead, dismissNotification } = useNotifications();
+  const {
+    notifications,
+    unreadCount,
+    markAsRead,
+    markAllAsRead,
+    dismissNotification,
+    browserPermission,
+    requestBrowserPermission,
+  } = useNotifications();
   const [showBellMenu, setShowBellMenu] = useState(false);
   const bellRef = useRef(null);
 
@@ -105,6 +113,19 @@ export const Navbar = ({ onOpenAddExpense, setMobileOpen }) => {
                 )}
               </div>
 
+              {/* Browser Permission Banner */}
+              {browserPermission !== 'granted' && (
+                <div className="p-3 bg-brand-purple/10 border-b border-border-subtle flex items-center justify-between text-xs">
+                  <span className="text-[11px] text-text-secondary">Get real-time desktop budget alerts</span>
+                  <button
+                    onClick={requestBrowserPermission}
+                    className="px-2.5 py-1 rounded-lg bg-brand-purple text-white text-[10px] font-bold hover:bg-brand-purpleDark transition shadow-sm"
+                  >
+                    Enable
+                  </button>
+                </div>
+              )}
+
               {/* Notification List */}
               <div className="max-h-80 overflow-y-auto divide-y divide-border-subtle">
                 {notifications.length === 0 ? (
@@ -159,3 +180,4 @@ export const Navbar = ({ onOpenAddExpense, setMobileOpen }) => {
 };
 
 export default Navbar;
+

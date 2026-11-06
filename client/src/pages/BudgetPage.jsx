@@ -471,3 +471,4 @@ export const BudgetPage = () => {
 };
 
 export default BudgetPage;
+

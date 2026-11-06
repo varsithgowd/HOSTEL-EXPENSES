@@ -77,3 +77,4 @@ expenseSchema.index({ userId: 1, date: -1 });
 expenseSchema.index({ userId: 1, category: 1 });
 
 export default mongoose.model('Expense', expenseSchema);
+

@@ -19,3 +19,4 @@ export const CategoryBadge = ({ category }) => {
 };
 
 export default CategoryBadge;
+

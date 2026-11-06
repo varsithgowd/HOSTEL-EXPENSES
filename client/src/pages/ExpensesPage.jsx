@@ -20,6 +20,7 @@ import {
 import api from '../services/api';
 import CategoryBadge from '../components/CategoryBadge';
 import AddExpenseModal from '../components/AddExpenseModal';
+import SplitBillModal from '../components/SplitBillModal';
 import { formatCurrency, formatDate } from '../utils/formatters';
 
 const CATEGORIES = [
@@ -65,9 +66,22 @@ export const ExpensesPage = () => {
 
   // Modals state
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSplitOpen, setIsSplitOpen] = useState(false);
   const [expenseToEdit, setExpenseToEdit] = useState(null);
   const [viewExpense, setViewExpense] = useState(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+
+  const handleLogSharedBill = (shareData) => {
+    setExpenseToEdit({
+      title: shareData.title,
+      amount: shareData.amount,
+      category: shareData.category,
+      paymentMethod: 'UPI',
+      date: new Date(),
+      description: shareData.description,
+    });
+    setIsModalOpen(true);
+  };
 
   const fetchExpenses = useCallback(async () => {
     setLoading(true);
@@ -174,6 +188,14 @@ export const ExpensesPage = () => {
               <span>Export CSV</span>
             </button>
           )}
+
+          <button
+            onClick={() => setIsSplitOpen(true)}
+            className="px-3.5 py-2 rounded-xl bg-bg-card border border-border-accent hover:border-brand-purple/50 text-brand-purpleLight text-xs font-semibold flex items-center gap-1.5 transition"
+            title="Split Bill with Roommates"
+          >
+            <span>Split Bill</span>
+          </button>
 
           <button
             onClick={() => {
@@ -549,6 +571,13 @@ export const ExpensesPage = () => {
         </div>
       )}
 
+      {/* Roommate Bill Splitter Modal */}
+      <SplitBillModal
+        isOpen={isSplitOpen}
+        onClose={() => setIsSplitOpen(false)}
+        onLogShare={handleLogSharedBill}
+      />
+
       {/* Add / Edit Expense Modal */}
       <AddExpenseModal
         isOpen={isModalOpen}
@@ -567,3 +596,4 @@ export const ExpensesPage = () => {
 };
 
 export default ExpensesPage;
+

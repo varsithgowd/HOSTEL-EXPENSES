@@ -34,3 +34,4 @@ connectDB()
     console.error('[Server] Fatal database connection error:', err);
     process.exit(1);
   });
+

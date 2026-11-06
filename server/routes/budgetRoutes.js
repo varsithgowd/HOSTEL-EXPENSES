@@ -16,3 +16,4 @@ router.put('/current', setBudget);
 router.get('/history', getBudgetHistory);
 
 export default router;
+

@@ -10,6 +10,42 @@ export const NotificationProvider = ({ children }) => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [activeAlerts, setActiveAlerts] = useState([]);
 
+  const [browserPermission, setBrowserPermission] = useState(() => {
+    return typeof window !== 'undefined' && 'Notification' in window
+      ? Notification.permission
+      : 'default';
+  });
+
+  const requestBrowserPermission = async () => {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      try {
+        const perm = await Notification.requestPermission();
+        setBrowserPermission(perm);
+        if (perm === 'granted') {
+          new Notification('Hostel Expense Tracker', {
+            body: 'Desktop budget notifications are now enabled! You will be alerted when reaching 70%, 90%, or 100% budget thresholds.',
+            icon: '/icon.png',
+          });
+        }
+      } catch (e) {
+        console.error('Error requesting notification permission:', e);
+      }
+    }
+  };
+
+  const triggerDesktopAlert = (title, message) => {
+    if (
+      typeof window !== 'undefined' &&
+      'Notification' in window &&
+      Notification.permission === 'granted'
+    ) {
+      new Notification(title, {
+        body: message,
+        icon: '/icon.png',
+      });
+    }
+  };
+
   const fetchNotifications = useCallback(async () => {
     if (!isAuthenticated) return;
     try {
@@ -17,6 +53,14 @@ export const NotificationProvider = ({ children }) => {
       if (res.data.success) {
         setNotifications(res.data.notifications);
         setUnreadCount(res.data.unreadCount);
+
+        // Check if there are unread critical alerts and alert the user
+        const unreadCritical = res.data.notifications.find(
+          (n) => !n.isRead && (n.type === 'danger' || n.type === 'exceeded' || n.type === 'warning')
+        );
+        if (unreadCritical) {
+          triggerDesktopAlert(unreadCritical.title, unreadCritical.message);
+        }
       }
     } catch (err) {
       console.error('Failed to fetch notifications:', err);
@@ -67,6 +111,9 @@ export const NotificationProvider = ({ children }) => {
       value={{
         notifications,
         unreadCount,
+        browserPermission,
+        requestBrowserPermission,
+        triggerDesktopAlert,
         activeAlerts,
         setActiveAlerts,
         fetchNotifications,
@@ -81,3 +128,4 @@ export const NotificationProvider = ({ children }) => {
 };
 
 export const useNotifications = () => useContext(NotificationContext);
+

@@ -44,3 +44,4 @@ notificationSchema.index({ userId: 1, period: 1, threshold: 1 });
 notificationSchema.index({ userId: 1, isRead: 1 });
 
 export default mongoose.model('Notification', notificationSchema);
+

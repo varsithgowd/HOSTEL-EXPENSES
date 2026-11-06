@@ -9,3 +9,4 @@ router.use(protect);
 router.post('/chat', askAssistant);
 
 export default router;
+

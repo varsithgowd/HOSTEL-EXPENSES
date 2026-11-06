@@ -17,3 +17,4 @@ router.get('/daily', getDailySpending);
 router.get('/monthly', getMonthlyTrends);
 
 export default router;
+

@@ -98,3 +98,4 @@ export const CATEGORY_CONFIG = {
     icon: 'MoreHorizontal',
   },
 };
+

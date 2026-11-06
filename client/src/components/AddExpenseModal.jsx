@@ -264,3 +264,4 @@ export const AddExpenseModal = ({ isOpen, onClose, onExpenseSaved, expenseToEdit
 };
 
 export default AddExpenseModal;
+

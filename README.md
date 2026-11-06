@@ -354,3 +354,4 @@ Tests:       13 passed, 13 total
 - **HTTP Headers**: `helmet` enforces secure HTTP response headers.
 - **CORS Protection**: Restricted in production to trusted origins.
 - **Safe Environment Handling**: `.gitignore` strictly protects `.env` secrets from ever being committed to source control.
+
