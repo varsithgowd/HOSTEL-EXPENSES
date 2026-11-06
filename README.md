@@ -2,7 +2,11 @@
 
 A modern, production-grade, secure full-stack personal finance web application built specifically for college students living in university hostels to manage daily expenses, set budget caps, monitor pocket money, avoid month-end deficits, and achieve personal savings goals.
 
-Designed with a sophisticated dark purple and violet theme, responsive mobile/desktop UI, real-time analytics, automated budget alert thresholds, and an AI-powered spending assistant.
+Designed with a sophisticated dark purple and violet theme, responsive mobile/desktop UI with bottom navigation, real-time analytics, automated budget alert thresholds, and an AI-powered spending assistant.
+
+🔗 **Live Production App:** [https://hostel-expense-tracker-eta.vercel.app](https://hostel-expense-tracker-eta.vercel.app)  
+📡 **Live Backend API:** [https://hostel-expenses.onrender.com/api/health](https://hostel-expenses.onrender.com/api/health)  
+📦 **GitHub Repository:** [https://github.com/varsithgowd/HOSTEL-EXPENSES](https://github.com/varsithgowd/HOSTEL-EXPENSES)
 
 ---
 
