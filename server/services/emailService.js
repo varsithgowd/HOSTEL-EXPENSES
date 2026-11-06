@@ -1,31 +1,7 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
 /**
- * Creates and returns a configured Nodemailer transporter
- */
-const createTransporter = () => {
-  const host = process.env.SMTP_HOST;
-  const port = parseInt(process.env.SMTP_PORT || '587', 10);
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-
-  if (host && user && pass) {
-    return nodemailer.createTransport({
-      host,
-      port,
-      secure: port === 465, // true for 465, false for 587 or other
-      auth: {
-        user,
-        pass,
-      },
-    });
-  }
-
-  return null;
-};
-
-/**
- * Sends a password reset email to the student
+ * Sends a password reset email to the student using the Resend Node.js SDK
  *
  * @param {Object} options
  * @param {string} options.to - Recipient email address
@@ -33,8 +9,8 @@ const createTransporter = () => {
  * @param {string} options.resetUrl - Full password reset URL with token
  */
 export const sendPasswordResetEmail = async ({ to, name, resetUrl }) => {
-  const from = process.env.EMAIL_FROM || 'Hostel Expense Tracker <no-reply@hostelexpenses.com>';
-  const transporter = createTransporter();
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.EMAIL_FROM || 'Hostel Expense Tracker <onboarding@resend.dev>';
 
   const htmlContent = `
 <!DOCTYPE html>
@@ -196,26 +172,34 @@ ${resetUrl}
 If you did not request this password reset, please ignore this email. Your password will remain unchanged.
 `;
 
-  // If transporter is configured, send the actual email
-  if (transporter) {
+  // Send via Resend HTTP API when API key is configured
+  if (apiKey) {
     try {
-      const info = await transporter.sendMail({
+      const resend = new Resend(apiKey);
+      const { data, error } = await resend.emails.send({
         from,
-        to,
+        to: [to],
         subject: 'Reset Your Password — Hostel Expense Tracker',
         text: textContent,
         html: htmlContent,
       });
-      return { success: true, messageId: info.messageId };
+
+      if (error) {
+        console.error('[EmailService:Resend] API error response:', error);
+        throw new Error(error.message || 'Resend failed to send password reset email');
+      }
+
+      console.log(`[EmailService:Resend] Reset email sent to ${to} (ID: ${data?.id})`);
+      return { success: true, id: data?.id };
     } catch (err) {
-      console.error('[EmailService] Error sending email via SMTP:', err);
+      console.error('[EmailService:Resend] Exception:', err.message);
       throw err;
     }
   }
 
-  // Fallback for development, testing, or unconfigured SMTP
+  // Fallback for development, testing, or when RESEND_API_KEY is omitted
   console.log('----------------------------------------------------');
-  console.log('[EmailService] SMTP not configured. Password Reset Link:');
+  console.log('[EmailService:Resend] RESEND_API_KEY not configured. Password Reset Link:');
   console.log(`To: ${to}`);
   console.log(`Reset URL: ${resetUrl}`);
   console.log('----------------------------------------------------');
