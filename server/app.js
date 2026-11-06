@@ -50,6 +50,7 @@ app.use(
       const isAllowed =
         allowedOrigins.includes(cleanOrigin) ||
         allowedOrigins.includes('*') ||
+        cleanOrigin.endsWith('.vercel.app') ||
         /^https:\/\/[a-zA-Z0-9_-]+\.vercel\.app$/.test(cleanOrigin);
 
       if (isAllowed) {

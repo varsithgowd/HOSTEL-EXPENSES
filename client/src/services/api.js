@@ -1,7 +1,29 @@
 import axios from 'axios';
 
+// Dynamically determine the API base URL
+const getBaseURL = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+
+  // 1. If an explicit valid non-placeholder URL is configured
+  if (envUrl && !envUrl.includes('YOUR-RENDER-BACKEND-URL')) {
+    let clean = envUrl.trim().replace(/\/+$/, '');
+    if (!clean.endsWith('/api')) {
+      clean = `${clean}/api`;
+    }
+    return clean;
+  }
+
+  // 2. If running on Vercel production or preview (e.g. hostel-expense-tracker-eta.vercel.app)
+  if (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
+    return 'https://hostel-expenses.onrender.com/api';
+  }
+
+  // 3. Fallback for local development (uses Vite proxy /api -> http://localhost:5000)
+  return '/api';
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: getBaseURL(),
   headers: {
     'Content-Type': 'application/json',
   },

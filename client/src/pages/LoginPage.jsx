@@ -33,7 +33,13 @@ export const LoginPage = () => {
         setError(res.message || 'Invalid email or password.');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else if (err.message && (err.message.includes('Network Error') || err.code === 'ERR_NETWORK')) {
+        setError('Unable to reach server. Please check your internet connection or backend status.');
+      } else {
+        setError(err.response?.data?.message || err.message || 'Login failed. Please check your credentials.');
+      }
     } finally {
       setLoading(false);
     }

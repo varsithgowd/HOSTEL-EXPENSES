@@ -68,7 +68,13 @@ export const RegisterPage = () => {
         setError(res.message || 'Registration failed.');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed. Please check your details.');
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else if (err.message && (err.message.includes('Network Error') || err.code === 'ERR_NETWORK')) {
+        setError('Unable to reach server. Please check your internet connection or backend status.');
+      } else {
+        setError(err.response?.data?.message || err.message || 'Registration failed. Please check your details.');
+      }
     } finally {
       setLoading(false);
     }
