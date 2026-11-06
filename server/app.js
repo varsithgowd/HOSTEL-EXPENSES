@@ -19,23 +19,48 @@ const app = express();
 app.use(helmet());
 
 // CORS Configuration
-const allowedOrigins = [
+const configuredOrigins = (process.env.CLIENT_URL || '')
+  .split(',')
+  .map((url) => url.trim().replace(/\/$/, ''))
+  .filter(Boolean);
+
+const defaultOrigins = [
   'http://localhost:5173',
   'http://127.0.0.1:5173',
-  process.env.CLIENT_URL,
-].filter(Boolean);
+  'http://localhost:3000',
+];
+
+const allowedOrigins = Array.from(new Set([...defaultOrigins, ...configuredOrigins]));
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, Postman)
+      // Allow requests with no origin (like mobile apps, curl, Postman, server-to-server)
       if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
+
+      // Normalize origin (remove any trailing slash)
+      const cleanOrigin = origin.replace(/\/$/, '');
+
+      // In development/test mode, allow all origins (including local network IPs for mobile testing)
+      if (process.env.NODE_ENV !== 'production') {
         return callback(null, true);
       }
-      return callback(new Error('CORS policy: Not allowed by CORS'));
+
+      // In production mode: allow explicitly configured origins, wildcard, or any Vercel deployment domain
+      const isAllowed =
+        allowedOrigins.includes(cleanOrigin) ||
+        allowedOrigins.includes('*') ||
+        /^https:\/\/[a-zA-Z0-9_-]+\.vercel\.app$/.test(cleanOrigin);
+
+      if (isAllowed) {
+        return callback(null, true);
+      }
+
+      return callback(new Error(`CORS policy: Origin ${origin} not allowed`));
     },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 

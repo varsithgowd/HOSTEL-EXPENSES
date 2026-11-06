@@ -8,11 +8,17 @@ let memServer = null;
 export const connectDB = async () => {
   const uri = process.env.MONGODB_URI;
 
+  if (process.env.NODE_ENV === 'production' && !uri) {
+    throw new Error(
+      'MONGODB_URI environment variable is required in production. Please configure your MongoDB Atlas connection string in the Render environment settings.'
+    );
+  }
+
   try {
-    if (uri && !uri.includes('localhost:27017')) {
+    if (uri && (uri.startsWith('mongodb+srv://') || !uri.includes('localhost:27017'))) {
       // Direct Atlas or custom MongoDB connection
       const conn = await mongoose.connect(uri, {
-        serverSelectionTimeoutMS: 5000,
+        serverSelectionTimeoutMS: 10000,
       });
       console.log(`[DB] Connected to MongoDB Atlas: ${conn.connection.host}`);
       return conn;
